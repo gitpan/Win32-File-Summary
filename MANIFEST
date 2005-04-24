@@ -1,0 +1,13 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+Summary.pm
+Summary.xs
+defines.h
+test.pl
+perlobject.map
+typemap
+data/w.doc
+data/test.txt
+META.yml                                 Module meta-data (added by MakeMaker)
