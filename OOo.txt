@@ -1,0 +1,5 @@
+Only for internal use!
+(The Properties in OpenOffice documents are directly read from the meta.xml file using
+the explanations from the following 
+	http://books.evc-cit.info/ch02.php#document-description-fig
+	http://books.evc-cit.info/pr01.php#who-should-read-section)

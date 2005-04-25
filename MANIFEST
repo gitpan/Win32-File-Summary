@@ -7,6 +7,7 @@ Summary.xs
 defines.h
 test.pl
 perlobject.map
+OOo.txt
 typemap
 data/w.doc
 data/test.txt

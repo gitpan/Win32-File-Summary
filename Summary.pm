@@ -37,7 +37,7 @@ use vars qw/ $VERSION /;
 #our @EXPORT = qw(
 	
 #);
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 #require XSLoader;
 #XSLoader::load('Win32::File::Summary', $VERSION);
@@ -68,6 +68,25 @@ the explanations from the following
 
   use Win32::File::Summary;
   my $Prop = Win32::File::Summary->new($file);
+  my $iscorOS = $Prop->IsWin2000OrNT();
+  print "This OS is the correct one\n";
+  my $isStgfile = $Prop->IsStgFile();
+  print "The file contains a storage object.\n";
+  my $result = $Prop->Read();
+  if(ref($result) eq "SCALAR")
+  {
+	my $err = $Prop->GetError();
+	print "The Error: " . $$err  . "\n";
+	exit;
+  }
+
+  my %hash = %{ $result };
+
+  foreach my $key (keys %hash)
+  {
+	print "$key=" . $hash{$key} . "\n";
+  }
+
 
 =head1 DESCRIPTION
 
@@ -97,10 +116,24 @@ This informationes can be read and add in the Property Dialog under the Summary 
 =item Read()
 
   This method reads the property set and returns a refernce to a hash which contain the informations.
+  If the method fail a scalar reference with the value \"0\" will be returned.
+  To check use the following code:
+  if(ref($result) eq "SCALAR")
+  {
+	my $err = $STR->GetError();
+	print "The Error: " . $$err  . "\n";
+	exit;
+  } else
+  {
+  	my %hash = %{ $result };
+  	(Do something with the hash.)
+  }
+
   
 =item GetError()
 
-  The GetError method returns the error message if there is one.
+  The GetError method returns the error message (scalar reference).
+  The method shall only called if the result from the Read() methode is a scalar reference.
 
 =back
 

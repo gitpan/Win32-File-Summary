@@ -1,5 +1,12 @@
 Revision history for Perl extension Win32::File::Summary.
 
+0.02 Monday, April 25, 2005
+      - changed the Read() method to return proper values
+      - changed the GetError() to return proper values
+      - changed the Pod documentation 
+      - added example to the Pod documentation
+
+
 0.01  Fri Oct 29 09:14:47 2004
 	- original version; created by h2xs 1.21 with options
 		-n Win32::File::Summary 

@@ -48,6 +48,7 @@ Summary {
 		int IsStgFile(void);
 		int IsNTFS(void);
 		SV* Read(void);
+		int Write(void);
 		SV* GetError(void);
 		int IsOOoFile(void) { return(m_IsOOo); }
 	private:
@@ -82,9 +83,10 @@ Summary::SetErr(char *msg)
 SV*
 Summary::GetError(void)
 {
-	SV* err = NEWSV(0,0);
-	err = newRV_noinc((SV *)m_perror);
-	return (err);
+	//SV* err = NEWSV(0,0);
+	//err = newRV_noinc(newSVpvn(m_perror, strlen(m_perror)));
+	return (newRV_noinc(newSVpvn(m_perror, strlen(m_perror))));
+	//return (err);
 }
 
 Summary::~Summary()
@@ -262,7 +264,8 @@ SV* Summary::Read(void) {
 	IPropertyStorage *pPropStg = NULL;
 	char tmp1[1024];
 	char tmp[1000] = { '\0' };
-	
+	char err[2];
+	strcpy(err, "0");
 	PROPVARIANT propvar;
 	IEnumSTATPROPSTG *penum;
 	STATPROPSTG PropStat;
@@ -283,8 +286,8 @@ SV* Summary::Read(void) {
 	if( FAILED(m_hr) ) 
 	{
 		
-		SetErr("could not open storage for inputfile ");
-		croak(m_perror);
+		SetErr("could not open storage for inputfile: ");
+		return(newRV_noinc(newSVpvn(err, strlen(err))));
 
 	} 
 	//m_hr = m_ipStg->Open(FMTID_UserDefinedProperties, STGM_READ|STGM_SHARE_EXCLUSIVE, &pPropStg);
@@ -292,14 +295,15 @@ SV* Summary::Read(void) {
 	if(FAILED(m_hr) )
 	{
 		SetErr("m_ipStg->Open failed: ");
-		croak(m_perror);
+		return(newRV_noinc(newSVpvn(err, strlen(err))));
+
 	} 
 
 	m_hr = pPropStg->Enum(&penum);
 	if(FAILED(m_hr) )
 	{
 		SetErr("PropStg->Enum failed: ");
-		croak(m_perror);
+		return(newRV_noinc(newSVpvn(err, strlen(err))));
 		
 	} 
 	m_hr = penum->Next(1, &PropStat, NULL);
@@ -313,7 +317,7 @@ SV* Summary::Read(void) {
 		if( FAILED(m_hr) )
 		{
 			SetErr("pPropStg->ReadMultiple failed: ");
-			croak(m_perror);
+			return(newRV_noinc(newSVpvn(err, strlen(err))));
 		}
 		PropertyPIDToCaption(propspec, tmp1);
 		
@@ -354,6 +358,15 @@ SV* Summary::Read(void) {
 	return (ptResult);
 }
 
+int
+Summary::Write(void)
+{
+	//m_hr = StgCreateStorageEx(
+	//	m_File,
+	//);
+	return (1);
+}
+
 MODULE = Win32::File::Summary		PACKAGE = Win32::File::Summary		
 
 Summary* 
@@ -364,6 +377,9 @@ MODULE = Win32::File::Summary		PACKAGE = SummaryPtr
 	
 SV*
 Summary::Read()
+
+int
+Summary::Write()
 
 SV*
 Summary::GetError();

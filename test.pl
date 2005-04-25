@@ -19,11 +19,12 @@ my $STR = Win32::File::Summary->new($file);
 my $iscorOS = $STR->IsWin2000OrNT();
 print "This OS is the correct one\n";
 my $isStgfile = $STR->IsStgFile();
-print "that the file contains a storage object.\n";
+print "The file contains a storage object.\n";
 my $result = $STR->Read();
-if(!$result)
+if(ref($result) eq "SCALAR")
 {
-	print $STR->GetError() . "\n";
+	my $err = $STR->GetError();
+	print "The Error: " . $$err  . "\n";
 	exit;
 }
 
