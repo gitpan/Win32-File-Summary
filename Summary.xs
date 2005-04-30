@@ -42,6 +42,8 @@ Summary {
 			if(!strcmp(tmp,"sxw")) m_IsOOo = 1;
 			if(!strcmp(tmp,"sxc")) m_IsOOo = 1;
 			if(!strcmp(tmp,"ods")) m_IsOOo = 1;
+			sv_setpv(get_sv("Win32::File::Summary::File", TRUE), File);
+			sv_setpv(get_sv("Win32::File::Summary::IsOOo", TRUE), );
 		}
 		~Summary();
 		int IsWin2000OrNT(void);
@@ -63,6 +65,7 @@ Summary {
 		IPropertySetStorage *m_ipStg;
 		HV* m_hv;
 		int m_IsOOo;
+		
 		
 
 };

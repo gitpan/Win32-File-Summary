@@ -4,11 +4,6 @@ use 5.006;
 use strict;
 use warnings;
 use Carp;
-use Archive::Zip;
-use Archive::Zip::MemberRead;
-use XML::Simple;
-use Text::Wrap;
-
 #use vars qw($VERSION @ISA @EXPORT);
 
 #require Exporter;
@@ -37,7 +32,9 @@ use vars qw/ $VERSION /;
 #our @EXPORT = qw(
 	
 #);
-our $VERSION = '0.02';
+our $VERSION = '0.04';
+our $File;
+our $IsOOo = 0;
 
 #require XSLoader;
 #XSLoader::load('Win32::File::Summary', $VERSION);
@@ -45,7 +42,6 @@ our $VERSION = '0.02';
 bootstrap Win32::File::Summary $VERSION;
 
 # Preloaded methods go here.
-
 
 
 # Autoload methods go after =cut, and are processed by the autosplit program.
@@ -56,13 +52,7 @@ __END__
 
 =head1 NAME
 
-Win32::File::Summary - Perl extension read property informations from MS compound files.
-It reads also property informations from \"normal\" files.
-(The Properties in OpenOffice documents are directly read from the meta.xml file using
-the explanations from the following 
-	http://books.evc-cit.info/ch02.php#document-description-fig
-	http://books.evc-cit.info/pr01.php#who-should-read-section)
-
+  Win32::File::Summary - Perl extension read property informations from MS compound files and normal files.
 
 =head1 SYNOPSIS
 
@@ -120,7 +110,7 @@ This informationes can be read and add in the Property Dialog under the Summary 
   To check use the following code:
   if(ref($result) eq "SCALAR")
   {
-	my $err = $STR->GetError();
+	my $err = $Prop->GetError();
 	print "The Error: " . $$err  . "\n";
 	exit;
   } else
@@ -145,7 +135,7 @@ Reinhard Pagitsch, E<lt>rpirpag@gmx.atE<gt>
 
 L<perl>.
 
-=TODO
+=head1 TODO
 
   Adding support for OpenOffice and Star Office documents.
   Adding suport to write summary informations.

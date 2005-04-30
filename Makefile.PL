@@ -6,7 +6,7 @@ WriteMakefile(
     'VERSION_FROM'	=> 'Summary.pm', # finds $VERSION
     'PREREQ_PM'		=> { Archive::Zip => 0, Archive::Zip::MemberRead => 0, XML::Simple => 0, Text::Wrap => 0 }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => 'Summary.pm', # retrieve abstract from module
+      (ABSTRACT => 'Win32::File::Summary - Perl extension read property informations from MS compound files and normal files.', # retrieve abstract from module
        AUTHOR     => 'Reinhard Pagitsch <rpirpag@gmx.at>') : ()),
     'LIBS'		=> ['Uuid.lib'], # e.g., '-lm'
     'DEFINE'		=> '', # e.g., '-DHAVE_SOMETHING'
