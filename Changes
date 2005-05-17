@@ -1,5 +1,8 @@
 Revision history for Perl extension Win32::File::Summary.
 
+0.0.5 Tue, May 17, 2005
+      - corrected error in XS module
+
 0.02 Monday, April 25, 2005
       - changed the Read() method to return proper values
       - changed the GetError() to return proper values

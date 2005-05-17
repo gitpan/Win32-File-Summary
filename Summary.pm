@@ -32,9 +32,7 @@ use vars qw/ $VERSION /;
 #our @EXPORT = qw(
 	
 #);
-our $VERSION = '0.04';
-our $File;
-our $IsOOo = 0;
+our $VERSION = '0.05';
 
 #require XSLoader;
 #XSLoader::load('Win32::File::Summary', $VERSION);
