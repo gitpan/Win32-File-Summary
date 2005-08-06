@@ -1,7 +1,10 @@
 Revision history for Perl extension Win32::File::Summary.
 
-0.0.5 Tue, May 17, 2005
-      - corrected error in XS module
+1.00 Sat, August 6, 2005
+	  - finished support to read OpenOffice and Star Office files
+	  - changed the POD documentation, regarding the new feature
+	  - added Tk script whith which the summary infos can be shown
+	  
 
 0.02 Monday, April 25, 2005
       - changed the Read() method to return proper values

@@ -1,24 +1,26 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
+
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
 #include "windows.h"
 #include "Objidl.h"
+#include "Objbase.h"
 #include "defines.h"
+#include "zip.h"
+#include "unzip.h"
+#include "OOo.h"
 
-//#undef Summary
 #undef THIS 
 
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
-/* Is an argument C<[]>, meaning we should pass C<NULL>? */
-/*#define null_arg(sv)	(  SvROK(sv)  &&  SVt_PVAV == SvTYPE(SvRV(sv))	\
-			   &&  -1 == av_len((AV*)SvRV(sv))  )
-*/
+
+
 class  
 Summary {
 	public: 
@@ -28,10 +30,13 @@ Summary {
 			char tmp[4];
 			m_IsOOo = 0;
 			int len = 0;
+			
 			MultiByteToWideChar(CP_ACP, 0, File, -1, m_File, (sizeof(m_File)/sizeof(WCHAR)));
 			m_hr = S_OK;
 			m_ipStg = NULL;
 			m_hv = (HV* )newHV();
+			m_av = newAV();
+			m_wFile=File;
 			len = strlen(File);
 			tmp[0] = File[len-3];
 			tmp[1] = File[len-2];
@@ -39,35 +44,99 @@ Summary {
 			tmp[3] = '\0';
 			//printf("tmp : %s\n", tmp);
 			m_IsOOo = 0;
+			m_oemcp = 0;
 			if(!strcmp(tmp,"sxw")) m_IsOOo = 1;
 			if(!strcmp(tmp,"sxc")) m_IsOOo = 1;
 			if(!strcmp(tmp,"ods")) m_IsOOo = 1;
+			if(!strcmp(tmp,"odt")) m_IsOOo = 1;
+			if(!strcmp(tmp,"odg")) m_IsOOo = 1;
+			if(!strcmp(tmp,"odp")) m_IsOOo = 1;
 		}
 		~Summary();
 		int IsWin2000OrNT(void);
 		int IsStgFile(void);
 		int IsNTFS(void);
 		SV* Read(void);
-		int Write(void);
+		SV* Write(SV* newdata);
 		SV* GetError(void);
 		int IsOOoFile(void) { return(m_IsOOo); }
+		void SetOEMCP(int oemcp) { m_oemcp=oemcp; }
+		SV* _GetTitles(void);
 	private:
 		void HrToString(HRESULT hr, char *string);
 		void PropertyPIDToCaption(PROPSPEC propspec, char *title);
-		SV* ReadOOo(SV* ptResult);
 		void SetErr(char *msg);
+		void ReadOOo(void);
+		void ReadXML(void);
 	private:
 		wchar_t m_File[2048];
+		char * m_wFile;
 		char m_perror[1024];
 		HRESULT m_hr;
 		IPropertySetStorage *m_ipStg;
 		HV* m_hv;
-		int m_IsOOo;
+		AV* m_av;
+		int m_IsOOo;	// 1 if the file is an OpenOffice document
+		bool m_oemcp;
+		//SV* m_ptResult;
 		
 		
 
 };
 
+SV*
+Summary::_GetTitles(void)
+{
+	return newRV((SV *)m_av);
+}
+
+void
+Summary::ReadXML(void)
+{
+	if(hv_store(m_hv, "Not jet implemented", (U32) strlen("Not jet implemented"), newSVpv("0", 0),0) == NULL)
+		croak("Can not store in Hash!\n");
+	
+}
+	
+void
+Summary::ReadOOo(void)
+{
+	unzFile uzFile;
+	unz_global_info pglobal_info;
+	uInt size_buff = 10000;
+	char *buff = (char *)malloc(size_buff+1);
+	uzFile = unzOpen(m_wFile);
+	if(uzFile != NULL)
+	{
+		if(unzGetGlobalInfo(uzFile, &pglobal_info) != UNZ_OK)
+			croak("Error in unzGetGlobalInfo!\n");
+
+		if(unzLocateFile(uzFile,"meta.xml", 2) != UNZ_OK)
+			croak("can not locate meta.xml!\n");
+
+		if(unzOpenCurrentFile(uzFile) != UNZ_OK)
+			croak("can not open meta.xml!\n");
+
+		if(unzReadCurrentFile(uzFile, buff, size_buff) < 0)
+			croak("can not read meta.xml!\n");
+		
+		OOo *OOo_data = new OOo;	// initializeing 
+		
+		OOo_data->SetBuffer(buff,m_oemcp);	// setting the buffer
+		
+		if(OOo_data->ParseBuffer(m_hv,m_av) == false)
+		{
+			printf("Error parsing XML - buffer!\n");
+		}
+		free(buff);	// Freeing temp. buffer
+		unzCloseCurrentFile(uzFile);
+		unzClose(uzFile);
+	} else
+	{
+		printf("could not open OpenOffice/StarOffice Document!\n");
+	}
+	
+}
 
 void 
 Summary::SetErr(char *msg)
@@ -87,13 +156,11 @@ Summary::GetError(void)
 	//SV* err = NEWSV(0,0);
 	//err = newRV_noinc(newSVpvn(m_perror, strlen(m_perror)));
 	return (newRV_noinc(newSVpvn(m_perror, strlen(m_perror))));
-	//return (err);
 }
 
 Summary::~Summary()
 { 
-	if( m_ipStg ) m_ipStg->Release(); 
-	printf("Closing\n");
+	if( m_ipStg ) m_ipStg->Release();
 }
 
 int
@@ -135,72 +202,72 @@ Summary::IsNTFS(void)
 void
 Summary::PropertyPIDToCaption(PROPSPEC propspec, char *title)
 {
-	//printf("propspec.propid: %i\n", propspec.propid);
-	char t[50] = { '\0' };
-	sprintf(t, " propspec.propid %i ", propspec.propid);
-	switch (propspec.propid)
-	{
-		case PID_CODEPAGE:
-     			strcpy(title, "Codepage");
-     			break;
-		case PID_TITLE:
-     			strcpy(title, "Title");
-     			break;
-   		case PID_SUBJECT:
-     			strcpy(title, "Subject");
-     			break;
-   		case PID_AUTHOR:
-     			strcpy(title, "Author");
-     			break;
-   		case PID_KEYWORDS:
-     			strcpy(title, "Keywords");
-     			break;
-   		case PID_COMMENTS:
-     			strcpy(title, "Comments");
-     			break;
-   		case PID_TEMPLATE:
-     			strcpy(title, "Template");
-     			break;
-   		case PID_LASTAUTHOR:
-     			strcpy(title, "Last Saved By");
-     			break;
-   		case PID_REVNUMBER:
-     			strcpy(title, "Revision Number");
-     			break;
-   		case PID_EDITTIME:
-     			strcpy(title, "Total Editing Time");
-     			break;
-   		case PID_LASTPRINTED:
-     			strcpy(title, "Last Printed");
-     			break;
-   		case PID_CREATE_DTM:
-     			strcpy(title, "Create Time/Date");
-     			break;
-   		case PID_LASTSAVE_DTM:
-     			strcpy(title, "Last Saved Time/Date");
-     			break;
-   		case PID_PAGECOUNT:
-     			strcpy(title, "Number of Pages");
-     			break;
-   		case PID_WORDCOUNT:
-     			strcpy(title, "Number of Words");
-     			break;
-   		case PID_CHARCOUNT:
-     			strcpy(title, "Number of Characters");
-     			break;
-   		case PID_THUMBNAIL:
-     			strcpy(title, "Thumbnail");
-     			break;
-   		case PID_APPNAME:
-     			strcpy(title, "Creating Application");
-     			break;
-   		case PID_SECURITY:
-	     		strcpy(title, "Security");
-     			break;
-   		default:
-     			strcpy(title, "Type not defined");
-     }
-	//printf("The title: %s + %s\n", title, t);
+	//printf("propspec.ulKind : %i propspec.propid %0x\n", propspec.ulKind, propspec.propid );
+	if(propspec.ulKind == 1) {
+		switch (propspec.propid)
+		{
+			case PID_CODEPAGE:
+     				strcpy(title, "Codepage");
+     				break;
+			case PIDSI_TITLE:
+     				strcpy(title, "Title");
+     				break;
+   			case PIDSI_SUBJECT:
+     				strcpy(title, "Subject");
+     				break;
+   			case PIDSI_AUTHOR:
+     				strcpy(title, "Author");
+     				break;
+   			case PIDSI_KEYWORDS:
+     				strcpy(title, "Keywords");
+     				break;
+   			case PIDSI_COMMENTS:
+     				strcpy(title, "Comments");
+     				break;
+   			case PIDSI_TEMPLATE:
+     				strcpy(title, "Template");
+     				break;
+   			case PIDSI_LASTAUTHOR:
+     				strcpy(title, "Last Saved By");
+     				break;
+   			case PIDSI_REVNUMBER:
+     				strcpy(title, "Revision Number");
+     				break;
+   			case PIDSI_EDITTIME:
+     				strcpy(title, "Total Editing Time");
+     				break;
+   			case PIDSI_LASTPRINTED:
+     				strcpy(title, "Last Printed");
+     				break;
+   			case PIDSI_CREATE_DTM:
+     				strcpy(title, "Create Time/Date");
+     				break;
+   			case PIDSI_LASTSAVE_DTM:
+     				strcpy(title, "Last Saved Time/Date");
+     				break;
+   			case PIDSI_PAGECOUNT:
+     				strcpy(title, "Number of Pages");
+     				break;
+   			case PIDSI_WORDCOUNT:
+     				strcpy(title, "Number of Words");
+     				break;
+   			case PIDSI_CHARCOUNT:
+     				strcpy(title, "Number of Characters");
+     				break;
+   			case PIDSI_THUMBNAIL:
+     				strcpy(title, "Thumbnail");
+     				break;
+   			case PIDSI_APPNAME:
+     				strcpy(title, "Creating Application");
+     				break;
+   			case PIDSI_DOC_SECURITY:
+		     		strcpy(title, "Security");
+     				break;
+   			default:
+     				strcpy(title, "Type not defined");
+     		}
+     	} else
+     		strcpy(title, (char*)propspec.lpwstr );
 }
 
 void
@@ -250,18 +317,13 @@ Summary::HrToString(HRESULT hr, char *string) {
 			if(hr == STG_E_ACCESSDENIED) 
 				strcpy(string,"STG_E_ACCESSDENIED");
 			if(hr == STG_E_FILENOTFOUND)
-				strcpy(string,"STG_E_FILENOTFOUND");
+				strcpy(string,"The requested storage does not exist (STG_E_FILENOTFOUND).");
 }
 
-SV* Summary::ReadOOo(SV* ptResult)
-{
-	printf("The document is from OpenOffice\n");
-	return(ptResult);
-}
 
 SV* Summary::Read(void) {
 		
-	SV* ptResult = NEWSV(0,0);
+	SV* m_ptResult = NEWSV(0,0);
 	IPropertyStorage *pPropStg = NULL;
 	char tmp1[1024];
 	char tmp[1000] = { '\0' };
@@ -272,10 +334,11 @@ SV* Summary::Read(void) {
 	STATPROPSTG PropStat;
         PROPSPEC propspec;
         SYSTEMTIME SystemTime;
-	//if (m_IsOOo == 1)
-	//{
-	//	return this->ReadOOo(ptResult);
-	//}
+	if (m_IsOOo == 1)
+	{
+		
+		this->ReadOOo();
+	}
 	m_hr = StgOpenStorageEx( m_File,
                           STGM_READ|STGM_SHARE_DENY_WRITE,
                           STGFMT_ANY,
@@ -286,7 +349,6 @@ SV* Summary::Read(void) {
                            reinterpret_cast<void**>(&m_ipStg) );
 	if( FAILED(m_hr) ) 
 	{
-		
 		SetErr("could not open storage for inputfile: ");
 		return(newRV_noinc(newSVpvn(err, strlen(err))));
 
@@ -295,17 +357,27 @@ SV* Summary::Read(void) {
 	m_hr = m_ipStg->Open(FMTID_SummaryInformation, STGM_READ|STGM_SHARE_EXCLUSIVE, &pPropStg);
 	if(FAILED(m_hr) )
 	{
-		SetErr("m_ipStg->Open failed: ");
-		return(newRV_noinc(newSVpvn(err, strlen(err))));
-
+		if(m_IsOOo == 0) {
+			SetErr("m_ipStg->Open failed: ");
+			return(newRV_noinc(newSVpvn(err, strlen(err))));
+		} else
+		{
+			m_ptResult = newRV_noinc((SV *) m_hv);
+			return (m_ptResult);
+		}
 	} 
 
 	m_hr = pPropStg->Enum(&penum);
 	if(FAILED(m_hr) )
 	{
-		SetErr("PropStg->Enum failed: ");
-		return(newRV_noinc(newSVpvn(err, strlen(err))));
-		
+		if(m_IsOOo == 0) {
+			SetErr("PropStg->Enum failed: ");
+			return(newRV_noinc(newSVpvn(err, strlen(err))));
+		} else
+		{
+			m_ptResult = newRV_noinc((SV *) m_hv);
+			return (m_ptResult);
+		}
 	} 
 	m_hr = penum->Next(1, &PropStat, NULL);
 	while(m_hr == S_OK)
@@ -321,9 +393,10 @@ SV* Summary::Read(void) {
 			return(newRV_noinc(newSVpvn(err, strlen(err))));
 		}
 		PropertyPIDToCaption(propspec, tmp1);
+		av_push(m_av, newSVpvn(tmp1, strlen(tmp1)));
 		
 		//if(VT_I4  == propvar.vt) propspec.propid = 19
-			//printf("propvar.vt %i!!!!!!!!!!!!!\n", propvar.vt);
+			//printf("propvar.vt %d !!!!!!!!!!!!! %s\n", propvar.vt, tmp1);
 		
 		if(propvar.vt == VT_LPSTR)
 		{
@@ -331,6 +404,7 @@ SV* Summary::Read(void) {
 				croak("Can not store in Hash!\n");
 		} else if( propvar.vt == VT_FILETIME )
 		{
+			
 			FileTimeToSystemTime(&propvar.filetime, &SystemTime);
 			wsprintf(tmp, TEXT("%02d/%02d/%d  %02d:%02d:%02d"),
        					SystemTime.wMonth, SystemTime.wDay, SystemTime.wYear, SystemTime.wHour, SystemTime.wMinute, SystemTime.wSecond );
@@ -348,24 +422,35 @@ SV* Summary::Read(void) {
 			printf("Value: %d VT: %d\n",propvar.lVal,  propvar.vt);
 
 		}
-	
+
 		if(PropStat.lpwstrName) {
 			 CoTaskMemFree(PropStat.lpwstrName);
 		}
 		m_hr = penum->Next(1, &PropStat, NULL);
 	} // end while m_hr == S_OK
 	printf("Ende\n\n");
-	ptResult = newRV_noinc((SV *) m_hv);
-	return (ptResult);
+	m_ptResult = newRV_noinc((SV *) m_hv);
+	return (m_ptResult);
 }
 
-int
-Summary::Write(void)
+SV* Summary::Write(SV* newdata)
 {
-	//m_hr = StgCreateStorageEx(
-	//	m_File,
-	//);
-	return (1);
+	HV* newinfo = (HV*) SvRV(newdata);
+	m_hr = StgOpenStorageEx( m_File,
+                          STGM_WRITE|STGM_SHARE_DENY_WRITE ,
+                          STGFMT_ANY,
+                          0,
+                          NULL,
+                          NULL,
+                           IID_IPropertySetStorage,
+                           reinterpret_cast<void**>(&m_ipStg) );
+	if( FAILED(m_hr) ) 
+	{
+		SetErr("could not open storage for inputfile: ");
+		return(newRV_noinc(newSVpvn("0", strlen("0"))));
+
+	} 
+	return (newRV_noinc(newSVpvn("1", strlen("1"))));
 }
 
 MODULE = Win32::File::Summary		PACKAGE = Win32::File::Summary		
@@ -374,16 +459,24 @@ Summary*
 Summary::new(File)
 	char * File
 
-MODULE = Win32::File::Summary		PACKAGE = SummaryPtr
+SV*
+Summary::_GetTitles()
+
 	
 SV*
 Summary::Read()
 
-int
-Summary::Write()
+void 
+Summary::SetOEMCP(oemcp)
+		int oemcp
+
+SV*
+Summary::Write(newdata)
+			SV* newdata
 
 SV*
 Summary::GetError();
+
 					
 int
 Summary::IsWin2000OrNT()
@@ -399,3 +492,4 @@ Summary::DESTROY()
 
 int
 Summary::IsOOoFile()
+

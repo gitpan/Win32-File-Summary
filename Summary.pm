@@ -32,7 +32,9 @@ use vars qw/ $VERSION /;
 #our @EXPORT = qw(
 	
 #);
-our $VERSION = '0.05';
+our $VERSION = '1.00';
+our $File;
+our $IsOOo = 0;
 
 #require XSLoader;
 #XSLoader::load('Win32::File::Summary', $VERSION);
@@ -41,6 +43,18 @@ bootstrap Win32::File::Summary $VERSION;
 
 # Preloaded methods go here.
 
+sub Set
+{
+	my $self = shift;
+	my %info = shift;
+}
+
+sub GetTitles
+{
+	my $self = shift;
+	my $titles=$self->_GetTitles();
+	return @{ $titles };
+}
 
 # Autoload methods go after =cut, and are processed by the autosplit program.
 
@@ -59,7 +73,7 @@ __END__
   my $iscorOS = $Prop->IsWin2000OrNT();
   print "This OS is the correct one\n";
   my $isStgfile = $Prop->IsStgFile();
-  print "The file contains a storage object.\n";
+  print "The file contains a storage object.\n" if $isStgfile == 1;
   my $result = $Prop->Read();
   if(ref($result) eq "SCALAR")
   {
@@ -78,12 +92,13 @@ __END__
 
 =head1 DESCRIPTION
 
-The modul Win32::File::Summary can be used to get the summary informations from a MS compound file or normal (text) files.
-What are the summary information: 
-For compound documents, e.g. Word, you can add Title, Author, Description and some other informations to the document.
-The same, but not all of them you can add also to normal (text) files.
-This informationes can be read and add in the Property Dialog under the Summary Tab. The module reads these informations.
+  The modul Win32::File::Summary can be used to get the summary informations from a MS compound file or normal (text) files.
+  What are the summary information: 
+  For compound documents, e.g. Word, you can add Title, Author, Description and some other informations to the document.
+  The same, but not all of them you can add also to normal (text) files.
+  This informationes can be read and add in the Property Dialog under the Summary Tab. The module reads these informations and prints them out.
 
+  Please see the test.pl file for an example
 
 =head1 FUNCTIONS
 
@@ -117,6 +132,10 @@ This informationes can be read and add in the Property Dialog under the Summary 
   	(Do something with the hash.)
   }
 
+=item SetOEMCP
+
+   If it is set to 1 then special characters like umlauts are displayed correctly in the DOS BOX.
+   If set to 0 then the characters are displayed correctly in a file.
   
 =item GetError()
 
@@ -125,6 +144,26 @@ This informationes can be read and add in the Property Dialog under the Summary 
 
 =back
 
+=head1 TECHNICAL and LICENSE INFORAMTION
+
+  The module Win32::File::Summary uses zlib1.1.4 from Mark Adler and Jean-loup
+  Gailly and the unzip 1.01 from http://www.winimage.com/zLibDll/unzip.htm
+  
+  Thank you to Mark Adler, Jean-loup Gailly and all other which are makeing
+  the libraries available to the public.
+  
+  There is no need to download the libraries above I allready added the
+  neccessary parts to the module.
+
+  It also uses the Mini-XML library version 2.2.2 from Michael Sweet.
+  The whole library can be found under http://www.easysw.com/~mike/mxml/.
+  Special thank to him for his great work.
+  I included this version in the mxml-2.2.2.tar.gz in this package in the subdirectory mxml/.
+  For License informations about the library please unpack the mxml-2.2.2.tar.gz and read the documentation.
+  
+  There is no need to extract the Mini-XML source files from the Tar Archive. I included the Perl modul Archive::Tar
+  which will extract the neccessary source files to the module directory if Makefile.PL is called.
+  
 =head1 AUTHOR
 
 Reinhard Pagitsch, E<lt>rpirpag@gmx.atE<gt>
@@ -135,7 +174,6 @@ L<perl>.
 
 =head1 TODO
 
-  Adding support for OpenOffice and Star Office documents.
-  Adding suport to write summary informations.
+  Adding suport to write the summary informations back to the file.
 
 =cut

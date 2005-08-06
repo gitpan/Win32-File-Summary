@@ -11,7 +11,6 @@ This informationes can be read and add in the Property Dialog under the tab Summ
 
 INSTALLATION
 
-To install this module type the following:
 
    perl Makefile.PL
    make
@@ -22,11 +21,7 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  Archive::Zip
-  Archive::Zip::MemberRead
-  XML::Simple
-  Text::Wrap
-  MS SDK: Uuid.lib
+  MS SDK: Uuid.lib mfc42.lib
 
 COPYRIGHT AND LICENCE
 

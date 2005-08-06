@@ -8,6 +8,7 @@
 use Test;
 BEGIN { plan tests => 1 };
 use Win32::File::Summary;
+
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -17,9 +18,15 @@ ok(1); # If we made it this far, we're ok.
 my $file = $ARGV[0] || 'data\w.doc';
 my $STR = Win32::File::Summary->new($file);
 my $iscorOS = $STR->IsWin2000OrNT();
+my $IsOOoFile = $STR->IsOOoFile();
+print "IsOOoFile: $IsOOoFile\n";
 print "This OS is the correct one\n";
 my $isStgfile = $STR->IsStgFile();
-print "The file contains a storage object.\n";
+if($isStgfile) { print "The file can contains a storage object.\n"; }
+#my $isNTFS=$STR->IsNTFS();
+print "The filesystem is NTFS\n" if $STR->IsNTFS();
+my $setoemCDP=1;
+$STR->SetOEMCP($setoemCDP);	# 1 if shown in DOS window, 0 for file output
 my $result = $STR->Read();
 if(ref($result) eq "SCALAR")
 {
@@ -28,10 +35,22 @@ if(ref($result) eq "SCALAR")
 	exit;
 }
 
-my %hash = %{ $result };
+my $tt = $STR->_GetTitles();
+my @titles = @{ $tt };
+print "Titles: " . join(' | ',@titles);
+print "\n";
 
+my %hash = %{ $result };
+if($setoemCDP == 1) {
+	open(FH, ">file.txt");
+}
 foreach my $key (keys %hash)
 {
+	if($setoemCDP == 1) {
+		print FH "$key=" . $hash{$key} . "\n";
+	}
 	print "$key=" . $hash{$key} . "\n";
 }
-
+if($setoemCDP == 1) {
+	close FH;
+}
