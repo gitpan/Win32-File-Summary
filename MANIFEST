@@ -4,9 +4,9 @@ MANIFEST
 README
 Summary.pm
 Summary.xs
+Summary.h
 defines.h
 test.pl
-display.pl
 perlobject.map
 typemap
 data/Drawing.odg
@@ -23,7 +23,9 @@ Archive/Tar.pm
 Archive/Tar/Constant.pm
 Archive/Tar/File.pm
 IO/Zlib.pm
+bin/display.pl
 mxml/mxml-2.2.2.tar.gz
+language.h
 adler32.c
 compress.c
 crc32.c

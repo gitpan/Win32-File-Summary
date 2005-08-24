@@ -4,6 +4,8 @@ use 5.006;
 use strict;
 use warnings;
 use Carp;
+use File::Basename;
+use Config;
 #use vars qw($VERSION @ISA @EXPORT);
 
 #require Exporter;
@@ -32,7 +34,7 @@ use vars qw/ $VERSION /;
 #our @EXPORT = qw(
 	
 #);
-our $VERSION = '1.00';
+our $VERSION = '1.10';
 our $File;
 our $IsOOo = 0;
 
@@ -43,17 +45,23 @@ bootstrap Win32::File::Summary $VERSION;
 
 # Preloaded methods go here.
 
-sub Set
+sub GetPath
 {
-	my $self = shift;
-	my %info = shift;
+	my $instdir = $Config{installsitelib};
+	print "$instdir\n";
+	return $instdir;
 }
 
-sub GetTitles
+sub new
 {
-	my $self = shift;
-	my $titles=$self->_GetTitles();
-	return @{ $titles };
+	my $class = shift;
+	my $self = {
+		File=>shift,
+	};
+	bless $self, $class;
+	my $path = dirname($INC{"Win32/File/Summary.pm"});
+	init($self->{File}, $path);
+	return $self;
 }
 
 # Autoload methods go after =cut, and are processed by the autosplit program.

@@ -1,9 +1,4 @@
 #!d:/perl/bin/perl -w
-
-# (c) By Reinhard Pagitsch August 2005, all rights reserved.
-# The script has the same lisense as Perl it self.
-# Use it at your own risk.
-
 use Tk;
 use Tk::Dialog;
 use Tk::MesgBox;
@@ -30,6 +25,7 @@ my @readonly = ('Print Date', 'Date', 'Creation Date', 'Editing Cycles', 'Cell C
 sub GetSummaryInfo
 {
 	my $file=shift;
+	print "befor new\n";
 	$STR = Win32::File::Summary->new($file);
 	my $result = $STR->Read();
 	if(ref($result) eq "SCALAR")
@@ -62,7 +58,7 @@ $lab = $mw->Label(-text=>'Ctrl+o for Open | Ctrl+s for Save | ESC to exit')->pac
 $mw->configure(-menu => $menubar = $mw->Menu);
 my $filebutton	= $menubar->cascade(-label=>$MenuLabelsFile[0], -tearoff=>0);
       $filebutton->command(-label => $MenuLabelsFile[2], -accelerator=>'Ctrl+o', -command => \&select_File);
-      $filebutton->command(-label => $MenuLabelsFile[3], -accelerator=>'Ctrl+s', -command => \&Save_File);
+    #  $filebutton->command(-label => $MenuLabelsFile[3], -accelerator=>'Ctrl+s', -command => \&Save_File);
       $filebutton->command(-label => $MenuLabelsFile[1], -accelerator=>'ESC', -command => \&close_window);
 
 
@@ -77,6 +73,7 @@ sub close_window
 sub select_File
 {
 	my $dir = "data";
+	undef $STR;
 	my %param = (
 		handle => 0,
 		title => 'Select File',
@@ -106,12 +103,8 @@ sub Save_File
 	{
 		print " Can be saved: $_=" . $newInfo{$_} . "\n";
 	}
-	if($STR) {
-		my $ret = $STR->Write(\%newInfo);
-		if(!$$ret) { print ${ $STR->GetError() }. "\n"; }
-		print "Return: $$ret\n";
-	}
-	
+	my $ret = $STR->Write(\%newInfo);
+	print "\nReturn of write=" . $ret . "\n";
 	
 }
 
@@ -130,14 +123,12 @@ sub DisplayInfo
 		$inframes[$count]->Label(-text=>$_)->pack('-side'=> 'left',-fill=>'both');
 		$newentry[$count] = $inframes[$count]->Entry(-text=>'',-width=>40,-relief=>'flat',-textvariable=>\$infos[$count])->pack(-side=>'right');
 		$newentry[$count]->insert(0,$value);
-		print "Readed: $_=" . $hash{$_} . "\n";
 		if(IsReadOnly($_))
 		{
 			$newentry[$count]->configure(-state=>'disabled');
 		}
 		$count++;
 	}
-	print "\n";
 	$newentry[0]->focus();
 }
 

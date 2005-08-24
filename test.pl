@@ -22,7 +22,8 @@ my $IsOOoFile = $STR->IsOOoFile();
 print "IsOOoFile: $IsOOoFile\n";
 print "This OS is the correct one\n";
 my $isStgfile = $STR->IsStgFile();
-if($isStgfile) { print "The file can contains a storage object.\n"; }
+print "The file can contains a storage object. $isStgfile\n";
+if($isStgfile) { print "The file can contains a storage object. $isStgfile\n"; }
 #my $isNTFS=$STR->IsNTFS();
 print "The filesystem is NTFS\n" if $STR->IsNTFS();
 my $setoemCDP=1;

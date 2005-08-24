@@ -61,7 +61,7 @@ WriteMakefile(
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT => 'Win32::File::Summary - Perl extension read property informations from MS compound files and normal files.', # retrieve abstract from module
        AUTHOR     => 'Reinhard Pagitsch <rpirpag[at]gmx.at>') : ()),
-    'LIBS'		=> ['mfc42.lib','Uuid.lib'], # e.g., '-lm' 'zlib.lib', 
+    'LIBS'		=> ['mfc42.lib Uuid.lib'], # e.g., '-lm' 'zlib.lib', 
     'DEFINE'		=> '', # e.g., '-DHAVE_SOMETHING'
 	# Insert -I. if you add *.h files later:
     'INC'		=> '-I source', # e.g., '-I/usr/include/other'
@@ -69,6 +69,10 @@ WriteMakefile(
     'OBJECT'		=> '$(O_FILES)', # link all the C files too
     #'XSOPT'             => '-C++',
     #'XSPROTOARG'	=> '-noprototypes',
+    'EXE_FILES' => [
+                           'bin/display.pl'
+                         ],
+	#'OPTIMIZE'=>'-Zi',
     'TYPEMAPS'	=> ['typemap'],
     'CC'	=> 'cl -TP -EHsc -GA3s -W3',
 );
