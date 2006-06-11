@@ -34,7 +34,7 @@ use vars qw/ $VERSION /;
 #our @EXPORT = qw(
 	
 #);
-our $VERSION = '1.10';
+our $VERSION = '1.10.1';
 our $File;
 our $IsOOo = 0;
 
@@ -52,17 +52,17 @@ sub GetPath
 	return $instdir;
 }
 
-sub new
-{
-	my $class = shift;
-	my $self = {
-		File=>shift,
-	};
-	bless $self, $class;
-	my $path = dirname($INC{"Win32/File/Summary.pm"});
-	init($self->{File}, $path);
-	return $self;
-}
+#sub new
+#{
+#	my $class = shift;
+#	my $self = {
+#		File=>shift,
+#	};
+#	bless $self, $class;
+#	my $path = dirname($INC{"Win32/File/Summary.pm"});
+#	init($self->{File}, $path);
+#	return $self;
+#}
 
 # Autoload methods go after =cut, and are processed by the autosplit program.
 

@@ -1,0 +1,83 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.54.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 0c6edcadd20adf0a45aa9c80aa58bda37782245b Archive/Tar.pm
+SHA1 07fae1ea904b64510f583bd91c06cb6ae62e3045 Archive/Tar/Constant.pm
+SHA1 f3ae43265ac0290f8854f582e88017ec0c3a7b31 Archive/Tar/File.pm
+SHA1 38aa9907084bf572ea924f6bb11108a504d9a928 Changes
+SHA1 f4df9f404d7ccb35ffd9e4a3b561ceef8561b9d9 IO/Zlib.pm
+SHA1 6389759ffbf787e245be9997c14998ca6de4b7b8 MANIFEST
+SHA1 df3ba81984d566fcbb47542ba73c795ee16fa375 META.yml
+SHA1 5dd664766c48edc391bc1c2a4cb735d4c3fe77ec Makefile.PL
+SHA1 d0b263075e7915b19de83665f5db24b4bc235fae OOo.cpp
+SHA1 cd5f7f4999874e0b8241a311f2cc024147fcd3aa OOo.h
+SHA1 d98b92ec8f76d8ccce8f140394542707e1f63980 README
+SHA1 6685fb317ef6205b7cdcf699945483281dba0dea Summary.h
+SHA1 1316d7844c468e8ed78abb7094f57112fee7b57c Summary.pm
+SHA1 828d2732b7ab5bc2cb8227b3fc0e65f66f243b76 Summary.xs
+SHA1 acf56fcb74c1c351b1c09184d6904a0f19073cf5 adler32.c
+SHA1 ce670696f669ccbe01e049a61277e35d0a4f12f8 bin/display.pl
+SHA1 f6d078e7a4ef9de16f7d15cf9ef25e4d2f517e44 compress.c
+SHA1 94f2c3e0fe3876a4be846911bb2617f8cc264ae7 crc32.c
+SHA1 c0223ce125e0852993403ada4268c54d8a0b5902 data/Drawing.odg
+SHA1 eb1baf723997413bef38d0e62c8064cc5abf9e24 data/FramesManager.sxw
+SHA1 822571c5815e3c83776be4464e643be688635635 data/OOometatest.odt
+SHA1 fe3d7b907387c2fed2ddc2df98071fba08652ea1 data/Presentation.odp
+SHA1 910f32478e72b35dfd880be9d41c3c77f0c1e887 data/Spreadsheet.ods
+SHA1 e582971ee716d7a1d0fd82027515e8fdccfad9ba data/Text.odt
+SHA1 ea96484d8a802f2c3ceedd3df0ccf916d79e21d1 data/liste.sxc
+SHA1 0a4d55a8d778e5022fab701977c5d840bbc486d0 data/test.txt
+SHA1 50d4254f616344db99272615a4cebad868d8a44b data/test1.txt
+SHA1 f0218b77eedf60e27f09a17ce1fd871e4d4793ea data/w.doc
+SHA1 93645bee75e0d763e3ce4c214ce6df8dd6c8838f defines.h
+SHA1 bb15c0073e7f8a17b73b4f3f6293ab3ccf48c6eb deflate.c
+SHA1 98dce26f631db3fabc6136d3bb0acb31968a024c deflate.h
+SHA1 2f91d3136bac9f7612222707c32e22487c7e0404 gzio.c
+SHA1 336e832e0a736ec96cd72d9eb03e10bc3f4b37da infblock.c
+SHA1 953c1d02925b6567447b32413aaa30d485b49935 infblock.h
+SHA1 488ed092945ddc77a932150d8c17c01e5c3e9926 infcodes.c
+SHA1 e59bf69cb9619ce5829c3eef82c3558132ff6df2 infcodes.h
+SHA1 d73a7df46b21ed04b46782d97fbcf7bbf3449c6b inffast.c
+SHA1 15ca061bf3d99db26e8b4365cc6a2c1cb3517c98 inffast.h
+SHA1 37c7e4d778b4b95931293f25ca19e5315ec1bf51 inffixed.h
+SHA1 eaf3911e427d9654ecd06f60fb6a5ffd5c8f307c inflate.c
+SHA1 1153cb04972c78fb54bd1f512ca784272f2c8f67 inftrees.c
+SHA1 40c65e01691aae081cbb3862acb7f10caedbd764 inftrees.h
+SHA1 998b2570ff83cfbe4fc69ac705f2703f1331f9f1 infutil.c
+SHA1 491cfddb54af46a1b4c1d81eb33b7902afb0a953 infutil.h
+SHA1 e8007066577abddba164b6119ad251c7de0b2d48 language.h
+SHA1 d554e29901a148cbe48f9f2ce5f8d2b0135d45d7 mxml/mxml-2.2.2.tar.gz
+SHA1 a4f7c796707ad2dbaed9b88df067be189b785515 perlobject.map
+SHA1 4a0f4d021e1be462fee6c88148c314e36e1ae250 svunzip.h
+SHA1 3e1b7baed5f9e4deaf1a72ca3f27a8d8595f47da test.pl
+SHA1 05f0c82691988bebed3683d990112a3f75df6e53 trees.c
+SHA1 6ab60a17f700321b61d81fa13d7499b84f1bdc32 trees.h
+SHA1 be33f4e7f07ee0218c607aca94e3b788277a5e4d typemap
+SHA1 b03c1d7ec94edd15e58bae3e1cd1aefc3a3f2b4b uncompr.c
+SHA1 d8e25ccb3bb9bc48381fecef732486eac6d5012e unzip.c
+SHA1 20a21381ca75b583bb4e2fc68352e5d194245f88 unzip.h
+SHA1 fc30098168da96418ee3db6e23fd5a54c21829e6 zconf.h
+SHA1 5e75e0a8f40c7ab1b4c2b09de8001cac8acf6d65 zip.h
+SHA1 2d5efaf5aee319b0210eebb298c7c573456c6325 zlib.h
+SHA1 1d975e25383b9653d94e14a336abea760a12cda5 zutil.c
+SHA1 7f3eb4ea453f7a452ff261b89c227bd0736ec4ac zutil.h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.3 (MingW32)
+
+iD8DBQFEjCY//IcR3cuCBPIRAl+UAJ9eozqQkytdhH6DnoZjpqQd8SvppwCgsnTl
+kYgTPGVqvHMevP8AwiZBGx0=
+=qmBD
+-----END PGP SIGNATURE-----

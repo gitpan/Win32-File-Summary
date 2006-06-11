@@ -21,7 +21,8 @@ my @newentry = ();
 my @readonly = ('Print Date', 'Date', 'Creation Date', 'Editing Cycles', 'Cell Count', 'Editing Duration', 
 'Table Count','Language', 'Number of Characters', 'Revision Number', 'Create Time/Date', 'Total Editing Time', 
 'Creating Application', 'Number of Words', 'Security', 'Last Saved Time/Date', 'Number of Pages', 'Template', 
-'Last Printed', 'Image Count', 'Object Count', 'Character Count', 'Word Count', 'Page Count', 'Paragraph Count', 'Last Saved By');
+'Last Printed', 'Image Count', 'Object Count', 'Character Count', 'Word Count', 'Page Count', 'Paragraph Count', 'Last Saved By',
+'Zuletzt gedruckt','Zuletzt gesichert von','Letzte Sicherung','Erstell Zeit/Datum','Revisions Nummer','Gesamte Editierzeit');
 sub GetSummaryInfo
 {
 	my $file=shift;
@@ -58,7 +59,7 @@ $lab = $mw->Label(-text=>'Ctrl+o for Open | Ctrl+s for Save | ESC to exit')->pac
 $mw->configure(-menu => $menubar = $mw->Menu);
 my $filebutton	= $menubar->cascade(-label=>$MenuLabelsFile[0], -tearoff=>0);
       $filebutton->command(-label => $MenuLabelsFile[2], -accelerator=>'Ctrl+o', -command => \&select_File);
-    #  $filebutton->command(-label => $MenuLabelsFile[3], -accelerator=>'Ctrl+s', -command => \&Save_File);
+      $filebutton->command(-label => $MenuLabelsFile[3], -accelerator=>'Ctrl+s', -command => \&Save_File);
       $filebutton->command(-label => $MenuLabelsFile[1], -accelerator=>'ESC', -command => \&close_window);
 
 

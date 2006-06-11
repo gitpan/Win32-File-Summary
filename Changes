@@ -1,5 +1,8 @@
 Revision history for Perl extension Win32::File::Summary.
 
+1.10.1 Sat, May 27, 2006
+	  - added SIGNATURE
+
 1.10 Sunday, August 21, 2005
 	  - Added support for german and english
 	  - For MS compund documents now all summary informations will be returned

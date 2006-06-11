@@ -77,7 +77,7 @@ char *substring(char *string, int start, size_t count) {
       size_t len = strlen(string);
       if (start < 0)
          start = len + start;
-      if (start >= 0 && start < len) {
+      if (start >= 0 && start < (int)len) {
          if (count == 0 || count > len - start)
             count = len - start;
          if (count < LEN) {

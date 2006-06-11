@@ -245,7 +245,7 @@ Summary::Write(SV *newinfo)
 	IPropertySetStorage *pPropSetStg = NULL;
 	IPropertyStorage * ipStg = NULL;
 	int i=numkeys-1;
-	PROPSPEC prop[100];
+	PROPSPEC propspec[100];
 	PROPVARIANT propvar[100];
        	PropVariantInit(propvar);
 	wchar_t OleTitle[50];	//WCHAR
@@ -267,6 +267,7 @@ Summary::Write(SV *newinfo)
 		return(m_ptResult);
 	}
 	m_hr = pPropSetStg->Open(FMTID_SummaryInformation, STGM_READWRITE|STGM_SHARE_EXCLUSIVE, &ipStg);
+	//m_hr = pPropSetStg->Open(FMTID_DocSummaryInformation, STGM_READWRITE|STGM_SHARE_EXCLUSIVE, &ipStg);
 	if( FAILED(m_hr) ) 
 	{
 		SetErr("could not open storage: ");
@@ -280,27 +281,32 @@ Summary::Write(SV *newinfo)
 		tmpsv = hv_fetch(hv, writeable[i].friendlyname_eng,strlen(writeable[i].friendlyname_eng),0);
 		if(tmpsv != NULL)
 		{
-        		if(writeable[i].IsOOo == 0 || writeable[i].IsOOo == 2) 
+        		if(writeable[i].IsOOo == 0 || writeable[i].IsOOo == 2 )
         		{
-        			
-				char *val = SvPVX(*tmpsv);
-				prop[count].ulKind = PRSPEC_LPWSTR;
-				retcode = MultiByteToWideChar(CP_ACP, 0, writeable[i].friendlyname_eng, -1,OleTitle, (sizeof(OleTitle)/sizeof(WCHAR)));
-			        prop[count].lpwstr = OleTitle;
-	        		
-			        propvar[count].vt = VT_LPWSTR;
-			        retcode=MultiByteToWideChar(CP_ACP, 0, val, -1, Oleval, (sizeof(Oleval)/sizeof(WCHAR)));
-        			propvar[count].pwszVal = Oleval;
-        			count++;
+        			if(strncmp(writeable[i].friendlyname_eng,"Category", strlen("Category"))) {
+					char *val = SvPVX(*tmpsv);
+					//printf("The val: %s |%s\n", val, writeable[i].friendlyname_eng);
+					retcode = MultiByteToWideChar(CP_ACP, 0, writeable[i].friendlyname_eng, -1,OleTitle, (sizeof(OleTitle)/sizeof(WCHAR)));
+					retcode=MultiByteToWideChar(CP_ACP, 0, val, -1, Oleval, (sizeof(Oleval)/sizeof(WCHAR)));
+					printf("The val: %S |%S\n", OleTitle, Oleval);
+					propspec[count].ulKind=PRSPEC_PROPID;
+					//propspec[count].lpwstr = OleTitle;
+					propspec[count].propid = writeable[i].PID;
+					propvar[count].vt = VT_LPWSTR;
+					propvar[count].pwszVal = Oleval;
+					//propspec[count].ulKind = PRSPEC_LPWSTR;
+        				count++;
+        			}
         		}
         	}
         }
-	m_hr = ipStg->WriteMultiple( count, prop, propvar, PID_FIRST_USABLE);
+	m_hr = ipStg->WriteMultiple( numkeys, propspec, propvar, 2);
+	
 	if( FAILED(m_hr) ) 
 	{
 		SetErr("could not write into inputfile: ");
-		printf(m_perror);
-		printf("\n");
+		//printf(m_perror);
+		//printf("\n");
 		m_ptResult = newSVpvn("0", strlen("0"));
 		return(m_ptResult);
 	} else {
@@ -310,11 +316,11 @@ Summary::Write(SV *newinfo)
 	if( FAILED(m_hr))
 	{
 		SetErr("could not commit the new values: ");
-		printf(m_perror);
+		//printf(m_perror);
 		m_ptResult = newSVpvn("0", strlen("0"));
 		return(m_ptResult);
 	}
-	printf("befor return!\n");
+	//printf("befor return!\n");
 	//return(newRV_noinc(newSVpvn("1", strlen("1"))));
 	if(pPropSetStg)
 		pPropSetStg->Release();
